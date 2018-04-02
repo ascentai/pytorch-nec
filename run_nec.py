@@ -14,7 +14,12 @@ def main(env_id, embedding_size):
   agent = NECAgent(env, embedding_model)
 
   subprocess.Popen(["tensorboard", "--logdir", "runs"])
-  configure("runs/pong-run")
+
+  try:
+    configure("runs/pong-run")
+  except ValueError:
+    pass
+
 
   for t in count():
     if t == 0:
@@ -23,8 +28,8 @@ def main(env_id, embedding_size):
       reward = agent.episode()
     print("Episode {}\nTotal Reward: {}".format(t, reward))
     log_value('score', reward, t)
-
-
+#
+#
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(
       formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -33,3 +38,7 @@ if __name__ == "__main__":
   parser.add_argument('--embedding_size', help='embedding size', default=64)
   args = parser.parse_args()
   main(args.env, args.embedding_size)
+  
+  
+
+

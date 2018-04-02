@@ -9,6 +9,7 @@ from utils.math_utils import discount, inverse_distance
 from utils.replay_memory import Transition, ReplayMemory
 from utils.torch_utils import use_cuda, move_to_gpu
 
+print("test")
 
 class NECAgent:
   def __init__(self,
@@ -22,7 +23,7 @@ class NECAgent:
                sgd_lr=1e-6,
                q_lr=0.01,
                gamma=0.99,
-               lookahead_horizon=100,
+               lookahead_horizon=10,
                update_period=4,
                kernel=inverse_distance,
                num_neighbors=50,
@@ -83,6 +84,7 @@ class NECAgent:
         self.embedding_network.parameters(), lr=sgd_lr)
     self.dnd_list = [DND(kernel, num_neighbors, max_memory, sgd_lr)
                      for _ in range(env.action_space.n)]
+    print('new agent')
 
   def choose_action(self, state_embedding):
     """
@@ -169,14 +171,20 @@ class NECAgent:
     total_reward = 0
     done = False
     while not done:
+      print('test1')
       state_embedding = self.embedding_network(
           move_to_gpu(Variable(Tensor(state)).unsqueeze(0)))
+      print('test2')
       action = self.choose_action(state_embedding)
+      print('test3')
       next_state, reward, done, _ = self.env.step(action)
+      print('test4')
       self.transition_queue.append(Transition(state, action, reward))
+      print('test5')
       total_reward += reward
       state = next_state
     self.update()
+    print('test6')
     return total_reward
 
   def warmup(self):
